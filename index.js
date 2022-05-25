@@ -6,8 +6,11 @@ const app = express();
 const router = express.Router();
 const port = 5000;
 app.use(bodyPraser.json());
+app.search(bodyPraser.urlencoded({ extended: true }));
 const uc = new UserController();
 app.use("/user/create", uc.createUser);
+
+app.use("/user/get", uc.getUser);
 
 app.listen(port, async () => {
   try {
