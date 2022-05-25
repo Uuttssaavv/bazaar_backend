@@ -1,10 +1,18 @@
 import mongoose from "mongoose";
-const { Schema } = mongoose;
 
-const BlogSchema = new Schema({
-  title: String, // String is shorthand for {type: String}
-  author: String,
+const UserSchema = new mongoose.Schema({
+  id: mongoose.Schema.Types.ObjectId,
+  email: String,
+  name: String,
+  password: { type: String, select: false },
   token: String,
+  resresh_token: String,
+  image_url: String,
+  address: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "address",
+  },
+  phone: String,
 });
-const Blog = mongoose.model("Blog", BlogSchema, "Blogs");
-export default Blog;
+const UserModel = mongoose.model("User", UserSchema);
+export default UserModel;
