@@ -9,7 +9,7 @@ class UserController {
     const addressModel = new AddressModel(address);
 
     const token = jsonwebtoken.sign({ email, phone }, "clickmind");
-
+    console.log(token);
     try {
       const user = new UserModel({
         email: email,
@@ -20,11 +20,13 @@ class UserController {
         address: (await addressModel.save())._id,
         token: token,
       });
+      //
       const result = await user.save(function (err, data) {
         if (err) {
+          res.send({ success: false, message: err.message });
           console.log(err);
         } else {
-          res.send({ messsage: "Data inserted", data: data });
+          res.send({ success: true, messsage: "Created user", data: data });
         }
       });
       if (result) {
@@ -44,6 +46,14 @@ class UserController {
       res.send({ success: true, data: user });
     } catch (e) {
       res.send({ message: `${e}` });
+    }
+  }
+  async login(req, res) {
+    const { email, password, phone } = req.body;
+
+    try {
+    } catch (e) {
+      res.send({ success: false, message: `${e}` });
     }
   }
 }
