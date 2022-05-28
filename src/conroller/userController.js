@@ -23,8 +23,11 @@ class UserController {
       //
       const result = await user.save(function (err, data) {
         if (err) {
-          res.send({ success: false, message: err.message });
-          console.log(err);
+          var errors = [];
+          for (const [key, value] of Object.entries(err.errors)) {
+            errors.push(value.message);
+          }
+          res.send({ success: false, message: errors });
         } else {
           res.send({ success: true, messsage: "Created user", data: data });
         }
@@ -33,7 +36,7 @@ class UserController {
         console.log(`result == ${result}`);
       }
     } catch (e) {
-      res.send({ error: `${e}` });
+      res.send({ success: false, error: "Error" + `${e}` });
     }
   }
   async getUser(req, res) {
@@ -45,7 +48,7 @@ class UserController {
       user.address = address;
       res.send({ success: true, data: user });
     } catch (e) {
-      res.send({ message: `${e}` });
+      res.send({ success: false, message: `${e}` });
     }
   }
   async login(req, res) {
@@ -56,6 +59,16 @@ class UserController {
       res.send({ success: false, message: `${e}` });
     }
   }
-}
+  async getAllUsers(req, res) {
+    UserModel.find({}, function (err, users) {
+      var userMap = {};
 
+      users.forEach(function (user) {
+        userMap[user._id] = user;
+      });
+
+      res.send({ data: userMap });
+    });
+  }
+}
 export default UserController;
