@@ -1,16 +1,13 @@
 import express from "express";
 import bodyPraser from "body-parser";
 import connectToServer from "./src/models/server.js";
-import UserController from "./src/conroller/userController.js";
+import userRoutes from "./src/routes/userRoutes.js";
 const app = express();
-const router = express.Router();
 const port = 5000;
 app.use(bodyPraser.json());
 app.search(bodyPraser.urlencoded({ extended: true }));
-const uc = new UserController();
-app.use("/user/create", uc.createUser);
 
-app.use("/user/get", uc.getUser);
+app.use("/api/v1/user", userRoutes);
 
 app.listen(port, async () => {
   try {
