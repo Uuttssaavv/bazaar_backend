@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 const mongoAtlasUri =
-  "mongodb+srv://utsav:Bz8l84QhlBjLBkwI@cluster0.x9hdx.mongodb.net/?retryWrites=true&w=majority";
+  "mongodb+srv://utsav:jnBkNCiDOjKBCEaJ@cluster0.x9hdx.mongodb.net/?retryWrites=true&w=majority";
 //
 const connectToServer = async () => {
   try {
     // Connect to the MongoDB cluster
-    await mongoose.connect(
+    mongoose.connect(
       mongoAtlasUri,
-
+      { useNewUrlParser: true, useUnifiedTopology: true },
       () => console.log(" Mongoose is connected")
     );
   } catch (e) {

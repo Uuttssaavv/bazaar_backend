@@ -12,7 +12,6 @@ app.use("/api/v1/user", userRoutes);
 app.listen(port, async () => {
   try {
     var res = await connectToServer();
-    console.log(res);
     console.log("Connection has been established successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
