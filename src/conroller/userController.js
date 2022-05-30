@@ -30,6 +30,7 @@ class UserController {
             message: errors === null ? "Exception occured" : errors.message,
             errors: errors,
           });
+          //
         } else {
           const user = await UserModel.findOne(data, "-password -__id -__v");
           const address = await AddressModel.findOne(user.address._id, "-__v");

@@ -46,7 +46,7 @@ UserSchema.methods.validPassword = async (password) => {
   return user != null;
 };
 UserSchema.methods.getAddress = async (user) => {
-  const address = await AddressModel.findOne({ _id: user.address._id }, "-__v");
+  const address = await AddressModel.findOne({ _id: this.address._id }, "-__v");
   user.address = address;
   return user;
 };
