@@ -8,6 +8,20 @@ app.use(bodyPraser.json());
 app.search(bodyPraser.urlencoded({ extended: true }));
 
 app.use("/api/v1/user", userRoutes);
+app.get("/", (req, res) => {
+  var error = new Error("ha ha ha");
+  error.statusCode = 401;
+  throw error;
+});
+app.use((err, req, res, next) => {
+  try {
+    res.status(err.statusCode).json({
+      error: err.message,
+    });
+  } catch (error) {
+    console.log("error occured");
+  }
+});
 
 app.listen(port, async () => {
   try {

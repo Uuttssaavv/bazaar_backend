@@ -16,12 +16,7 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Password can't be blank"],
     select: false,
   },
-  token: {
-    type: String,
-    required: [true, "Token can't be blank"],
 
-    unique: [true, "Token already in use."],
-  },
   resresh_token: String,
   image_url: String,
   phone: {
@@ -40,11 +35,6 @@ const UserSchema = new mongoose.Schema({
     ref: "address",
   },
 });
-UserSchema.methods.validPassword = async (password) => {
-  const user = await UserModel.findOne({ password: password });
-
-  return user != null;
-};
 UserSchema.methods.getAddress = async (user) => {
   const address = await AddressModel.findOne({ _id: this.address._id }, "-__v");
   user.address = address;
