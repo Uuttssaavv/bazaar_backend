@@ -14,7 +14,7 @@ const BusinessSchema = new mongoose.Schema({
   facebook_page: String,
   whatsapp_number: String,
   user: {
-    ref: `user`,
+    ref: "User",
     type: mongoose.Schema.Types.ObjectId,
   },
   category: {

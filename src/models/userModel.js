@@ -10,6 +10,7 @@ const UserSchema = new mongoose.Schema({
     unique: [true, "Email already in use."],
   },
   name: String,
+  token: String,
   password: {
     type: String,
     minlength: [8, "Password cannot be less than 8 characters"],
