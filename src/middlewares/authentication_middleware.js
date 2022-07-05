@@ -1,23 +1,23 @@
+import jsonwebtoken from "jsonwebtoken";
 import UserModel from "../models/userModel.js";
-
-const signupMiddleware = async (req, resp, next) => {
-  const { email, phone } = req.body;
-  const params = {
-    email: email,
-  };
-  if (phone) {
-    delete params.email;
-    params["phone"] = phone;
-  }
-  var user = await UserModel.findOne(params);
-
-  if (user) {
-    resp.status(409).json({
-      success: false,
-      message: "User already exists",
-    });
-  } else {
-    next();
+const authenticationMiddleware = async (req, resp, next) => {
+  //
+  console.log(req.baseUrl + req.path);
+  const token = req.headers.authorization;
+  try {
+    if (!token) {
+      throw "token not provided";
+    }
+    var params = jsonwebtoken.verify(token.substring(6), "clickmind");
+    var user = await UserModel.findOne(params);
+    if (!user) {
+      resp.send({ success: false, message: "Invalid authorization" });
+    } else {
+      req.body.user = user;
+      next();
+    }
+  } catch (e) {
+    resp.send({ success: false, message: "Invalid " + `${e}` });
   }
 };
-export { signupMiddleware };
+export default authenticationMiddleware;
