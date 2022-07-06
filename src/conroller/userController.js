@@ -2,129 +2,73 @@
 import jsonwebtoken from "jsonwebtoken";
 import UserModel from "../models/userModel.js";
 import AddressModel from "../models/addressModel.js";
+import bcrypt from "bcryptjs";
 class UserController {
   async register(req, res) {
     const { name, email, password, image_url, phone, address } = req.body;
     const addressModel = new AddressModel(address);
+    const encrpassword = await bcrypt.hash(password, 8);
 
-    const token = jsonwebtoken.sign({ email, phone }, "clickmind");
-    addressModel.save().then(async (address) => {
-      try {
-        const user = new UserModel({
-          email: email,
-          name: name,
-          password: password,
-          image_url: image_url,
-          phone: phone,
-          address: address,
-        });
-
-        await user.save(async (err, data) => {
-          if (err) {
-            var errors = handleError(err);
-
-            res.send({
-              success: false,
-              message: errors === null ? "Exception occured" : errors.message,
-              errors: errors,
-            });
-          } else {
-            const user = await UserModel.findOne(data, "-password -__v");
-            const address = await AddressModel.findOne(
-              user.address._id,
-              "-__v"
-            );
-            user.address = address;
-            res.send({
-              success: true,
-              messsage: "Created user successfully",
-              data: {
-                email: user.email,
-                name: user.name,
-              },
-            });
-          }
-        });
-      } catch (e) {
-        res.send({ success: false, message: "Error" + `${e}` });
-      }
-    });
-  }
-  async getUser(req, res) {
     try {
-      const token = req.headers.authorization;
-      var params = {};
-      if (token) {
-        params = jsonwebtoken.verify(token, "clickmind");
-      } else {
-        params = {
-          _id: req.query.id,
-        };
-      }
-      const user = await UserModel.findOne(params, "-__v -token");
-      const address = await AddressModel.findOne(user.address._id, "-__v");
-      user.address = address;
-      res.send({ success: true, data: user });
-    } catch (e) {
-      res.send({
-        success: false,
-        message: "No user found for corresponding data.",
+      const user = new UserModel({
+        email: email,
+        name: name,
+        password: encrpassword,
+        image_url: image_url,
+        phone: phone,
       });
+      user.address = await addressModel.save();
+      const usr = await user.save();
+      const token = jsonwebtoken.sign({ _id: usr._id }, "clickmind");
+      usr.token = token;
+      usr.populate("address");
+      if (usr) {
+        usr.password = "";
+        res.send({ success: true, data: usr });
+      }
+    } catch (e) {
+      res.send({ success: false, message: "Error" + `${e}` });
     }
   }
+
   async login(req, res) {
-    var error = new Error("login failed");
-    error.statusCode = 404;
-    throw error;
-    // const { email, password, phone } = req.body;
-    // const params = {
-    //   email: email,
-    // };
-    // if (phone) {
-    //   delete params.email;
-    //   params["phone"] = phone;
-    // }
-    // console.log(params);
-    // try {
-    //   const user = await UserModel.findOne(params, "-__v");
-    //   if (user) {
-    //     if (await user.validPassword(password)) {
-    //       var response = await user.getAddress(user);
-    //       res.send({ success: true, data: response });
-    //     } else {
-    //       throw "";
-    //     }
-    //   } else {
-    //     throw "";
-    //   }
-    // } catch (e) {
-    //   res.send({
-    //     success: false,
-    //     message: "Invalid email or password",
-    //   });
-    // }
+    const { email, password, phone } = req.body;
+    const params = {
+      email: email,
+    };
+    if (phone) {
+      delete params.email;
+      params["phone"] = phone;
+    }
+
+    try {
+      const user = await UserModel.findOne(params, "-__v +password").populate(
+        "address"
+      );
+      if (user) {
+        const token = jsonwebtoken.sign({ _id: user._id }, "clickmind");
+        user.token = token;
+        console.log(token);
+        const passwordIsValid = bcrypt.compareSync(
+          req.body.password,
+          user.password
+        );
+        if (passwordIsValid) {
+          delete user.password;
+          res.status(200).json({ success: true, data: user });
+        } else {
+          throw "password doesn't match";
+        }
+      } else {
+        throw "invalid phone or email";
+      }
+    } catch (e) {
+      res.status(404).json({
+        success: false,
+        error: "Error " + `${e}`,
+        message: "Invalid email or password",
+      });
+    }
   }
 }
 export default UserController;
-
-function handleError(err) {
-  var errors = {};
-  try {
-    if (err.code === 11000) {
-      Object.keys(err.keyValue).forEach((key) => {
-        errors[key] = `${
-          key[0].toUpperCase() + key.substring(1)
-        } already in use.`;
-      });
-      console.log("unique error");
-    } else {
-      Object.keys(err.errors).forEach((key) => {
-        errors[key] = err.errors[key].message;
-      });
-    }
-    errors["message"] = "Validation Error";
-  } catch (e) {
-    errors = null;
-  }
-  return errors;
-}
