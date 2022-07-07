@@ -1,5 +1,4 @@
 import BusinessModel from "../models/postModel.js";
-import CategoryModel from "../models/categoryModel.js";
 import AddressModel from "../models/addressModel.js";
 class PostController {
   async getPost(req, res) {
@@ -46,14 +45,12 @@ class PostController {
 
     try {
       var newAdd;
-      //62c67d79e6076f04867105be
       if (address.id) {
         newAdd = await AddressModel.findByIdAndUpdate(address.id, address);
       } else {
         newAdd = await AddressModel(address).save();
       }
       const data = {
-        // user: user._id,
         category: category_id,
         title: title,
         phone: phone,
