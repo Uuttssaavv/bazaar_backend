@@ -8,6 +8,8 @@ const authenticationMiddleware = async (req, resp, next) => {
     if (!token) {
       throw "token not provided";
     }
+    console.log(token.substring(6));
+
     var params = jsonwebtoken.verify(token.substring(6), "clickmind");
     var user = await UserModel.findOne(params);
     if (!user) {
