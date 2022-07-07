@@ -32,9 +32,7 @@ const reporter = async (req, res, next) => {
   } else {
     errors = errors.array();
   }
-  console.log(index);
-  console.log(req.path);
-  console.log(errors);
+
   if (errors.length !== 0) {
     const errorMessages = errors.map((error) => {
       return error.nestedErrors
