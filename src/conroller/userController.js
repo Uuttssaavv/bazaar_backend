@@ -44,13 +44,11 @@ class UserController {
       const isPasswordValid = bcrypt.compareSync(password, usr.password);
       if (isPasswordValid) {
         await UserModel.findByIdAndUpdate(user.id, { password: encrpassword });
-        res
-          .status(201)
-          .json({
-            success: true,
-            message: "Changed password successfully",
-            user: user,
-          });
+        res.status(201).json({
+          success: true,
+          message: "Changed password successfully",
+          user: user,
+        });
       } else {
         res.status(401).send({ success: false, message: "Incorrect password" });
       }
@@ -63,7 +61,7 @@ class UserController {
       });
     }
   }
-
+  // saturday commit
   async login(req, res) {
     const { email, password, phone } = req.body;
     const params = {
