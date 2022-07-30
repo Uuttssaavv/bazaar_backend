@@ -61,7 +61,6 @@ class UserController {
       });
     }
   }
-  // saturday commit
   async login(req, res) {
     const { email, password, phone } = req.body;
     const params = {
