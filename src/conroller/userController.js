@@ -65,7 +65,6 @@ class UserController {
     const { email, password, phone } = req.body;
     const params = {
       email: email,
-      //sat commit
     };
     if (phone) {
       delete params.email;
@@ -76,6 +75,7 @@ class UserController {
       const user = await UserModel.findOne(params, "-__v +password").populate(
         "address"
       );
+      //sat commit
       if (user) {
         const token = jsonwebtoken.sign({ _id: user._id }, "clickmind");
         user.token = token;
