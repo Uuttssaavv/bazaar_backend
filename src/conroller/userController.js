@@ -75,7 +75,6 @@ class UserController {
       const user = await UserModel.findOne(params, "-__v +password").populate(
         "address"
       );
-      //sat commit
       if (user) {
         const token = jsonwebtoken.sign({ _id: user._id }, "clickmind");
         user.token = token;
@@ -90,6 +89,7 @@ class UserController {
       } else {
         throw "invalid phone or email";
       }
+      //sat commit
     } catch (e) {
       res.status(404).json({
         success: false,
