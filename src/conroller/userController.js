@@ -98,5 +98,5 @@ class UserController {
     }
   }
 }
-//sat commit
 export default UserController;
+//sat commit
