@@ -65,6 +65,7 @@ class UserController {
     const { email, password, phone } = req.body;
     const params = {
       email: email,
+      //sat commit
     };
     if (phone) {
       delete params.email;
