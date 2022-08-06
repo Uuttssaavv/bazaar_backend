@@ -71,7 +71,6 @@ class UserController {
       params["phone"] = phone;
     }
 
-    //sat commit
     try {
       const user = await UserModel.findOne(params, "-__v +password").populate(
         "address"
