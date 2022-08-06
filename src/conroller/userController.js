@@ -8,6 +8,7 @@ class UserController {
     const { name, email, password, image_url, phone, address } = req.body;
     const encrpassword = await bcrypt.hash(password, 8);
 
+    //sat commit
     try {
       const user = new UserModel({
         email: email,
@@ -99,4 +100,3 @@ class UserController {
   }
 }
 export default UserController;
-//sat commit
