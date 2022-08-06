@@ -89,7 +89,6 @@ class UserController {
       } else {
         throw "invalid phone or email";
       }
-      //sat commit
     } catch (e) {
       res.status(404).json({
         success: false,
@@ -99,4 +98,5 @@ class UserController {
     }
   }
 }
+//sat commit
 export default UserController;
